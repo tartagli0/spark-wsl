@@ -4,3 +4,6 @@
 *.log
 *.pdf
 *.gz
+*.toc
+*.vscode
+_*
