@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{minted}
+\usepackage{listings}
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
@@ -37,7 +38,7 @@
         \subsubsection{Install \emph{JRE}}
         To install \emph{OpenJDK 8}, run the following command in a terminal:
         \begin{minted}{bash}
-        sudo apt install openjdk-8-jre-headless            
+            sudo apt install openjdk-8-jre-headless            
         \end{minted}
 
         \subsubsection{Set \emph{JAVA\_HOME}}
@@ -50,12 +51,12 @@
             \item[Open] the \emph{.bashrc} file with any editor (e.g., \emph{vim}, \emph{nano}).
             For example:
             \begin{minted}{bash}
-            vim ~/.bashrc
+                vim ~/.bashrc
             \end{minted}
 
             \item[Add] the following line to the \emph{.bashrc} file:
             \begin{minted}{bash}
-            export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64                 
+                export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64                 
             \end{minted}
             
             \item[Reload] shell environment configuration:
@@ -65,8 +66,62 @@
 
             \item[Verify] that path was correctly set:
             \begin{minted}{bash}
-            echo $JAVA_HOME
+                echo $JAVA_HOME
             \end{minted}
         \end{description}
+
+\section{\emph{PostgreSQL}}
+\emph{Hive} requires a database for its metastore. In terms of open-source options, \emph{Hive} can use
+\emph{MySQL}, \emph{PostgreSQL}, and \emph{Derby}. This guide will use \emph{PostgreSQL}.
+
+    \subsection{Install \emph{PostgreSQL}}
+    \emph{PostgreSQL 10} is the default version packaged for \emph{Ubuntu 18.04}. Install
+    \emph{PostgreSQL 10} with the command:
+    \begin{minted}{bash}
+        sudo apt install postgresql-10
+    \end{minted}
+
+    \subsection{Start database server}
+    The \emph{PostgreSQL} will need to be started every time \emph{WSL} is started. Initialize the
+    server using the command:
+    \begin{minted}{bash}
+        sudo service postgresql start
+    \end{minted}
+
+    \subsection{Configure \emph{Hive} metastore}
+    The \emph{psql} application is used to interact with \emph{PostgreSQL} in a terminal.
+    \begin{description}
+        \item[Log into] \emph{PostgreSQL} via \emph{psql} with default user \emph{postgres}:
+        \begin{minted}{bash}
+            sudo -u postgres psql 
+        \end{minted}
+
+        \item[Add] new user \emph{hive}
+        (for simplicity, the new user will also be given \emph{hive} as the password):
+        \begin{minted}{postgres}
+            CREATE USER hive WITH PASSWORD 'hive';
+        \end{minted}
+
+        \item[Create] new database for \emph{Hive} metastore:
+        \begin{minted}{postgres}
+            CREATE DATABASE hive_metastore;
+        \end{minted}
+
+        \item[Give] ownership of \emph{hive\_metastore} database to user \emph{hive}:
+        \begin{minted}{postgres}
+            ALTER DATABASE hive_metastore OWNER TO hive;
+        \end{minted}
+
+        \item[Exit] \emph{psql} with the command: \mintinline{psql}{\q}
+    \end{description}
+
+    \subsection{Install \emph{Java Database Connectivity} Drivers}
+    The \emph{Java Database Connectivity} (\emph{JDBC}) drivers allow \emph{Java} to interact with
+    databases. As \emph{Hive} runs in \emph{Java}, it requires the \emph{PostgreSQL JDBC} drivers.
+    Install the drivers drivers in \emph{Ubuntu} via the following command:
+    \begin{minted}{bash}
+        sudo apt install libpostgresql-jdbc-java
+    \end{minted}
+
 
 \end{document}
