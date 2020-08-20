@@ -1,7 +1,7 @@
 \documentclass{article}
 
 \usepackage{minted}
-\usepackage{listings}
+\usepackage{url}
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
@@ -33,19 +33,18 @@ Make sure to use \emph{Ubuntu 18.04} as the distro.
 \emph{OpenJDK} is a standard package in most \emph{Linux} distributions. Though \emph{OpenJDK 11}
 is the latest version, \emph{Spark} and its related components require \emph{OpenJDK 8}.
 
-    \subsubsection{Install \emph{JRE}}
+    \subsection{Install \emph{JRE}}
     To install \emph{OpenJDK 8}, run the following command in a terminal:
     \begin{minted}{bash}
         sudo apt install openjdk-8-jre-headless            
     \end{minted}
 
-    \subsubsection{Set \emph{JAVA\_HOME}}
+    \subsection{Set \emph{JAVA\_HOME}}
     \emph{Spark} and other components will need to know the path of the
     \emph{JRE}. This is accomplished by setting the \emph{JAVA\_HOME}
     system variable.
 
     \begin{description}
-
         \item[Open] the \emph{.bashrc} file with any editor (e.g., \emph{vim}, \emph{nano}).
         For example:
         \begin{minted}{bash}
@@ -121,5 +120,14 @@ is the latest version, \emph{Spark} and its related components require \emph{Ope
         sudo apt install libpostgresql-jdbc-java
     \end{minted}
 
+\newpage
+\begin{thebibliography}{9}
+
+    \bibitem{postgres_metastore}
+        Hewlett Packard Enterprise Development LP,
+        \textit{Configuring a Remote PostgreSQL Database for the Hive Metastore},
+        2020,
+        \url{https://docs.datafabric.hpe.com/61/Hive/Config-RemotePostgreSQLForHiveMetastore.html}
+\end{thebibliography}
 
 \end{document}
