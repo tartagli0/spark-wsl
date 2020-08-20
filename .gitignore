@@ -8,3 +8,7 @@
 *.vscode
 _*
 *.out
+*.bbl
+*.bcf
+*.blg
+*.xml
