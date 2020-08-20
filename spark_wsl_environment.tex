@@ -120,6 +120,35 @@ is the latest version, \emph{Spark} and its related components require \emph{Ope
         sudo apt install libpostgresql-jdbc-java
     \end{minted}
 
+\section{SSH Key}
+\emph{Secure Shell} (\emph{SSH}) encrypts communications over insecure networks. To accomplish encryption
+\emph{SSH} utilizes public and private keys.
+
+    \subsection{Generate key}
+     Generate] an \emph{ssh key} with the following command:
+        \begin{minted}{bash}
+            ssh-keygen -t rsa
+        \end{minted}
+    Leave the password blank when prompted, as \emph{Hadoop} will utilize a password-less \emph{ssh}
+    login.
+
+    \subsection{Allow \emph{localhost} login}
+    \emph{Hadoop} requires the ability to log into the \emph{localhost} (i.e., your local PC) via
+    password-less \emph{ssh}. To accomplish this, run the following command:
+    \begin{minted}{bash}
+        cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+    \end{minted}
+
+    \subsection{Restart \emph{ssh} service}
+    Run the following command to apply new settings:
+    \begin{minted}{bash}
+        sudo service ssh restart
+    \end{minted}
+    This command must be re-executed any time the following error message is encountered:
+    \begin{minted}{bash}
+        ssh: connect to host localhost port 22: Connection refused
+    \end{minted}
+
 \newpage
 \begin{thebibliography}{9}
 
