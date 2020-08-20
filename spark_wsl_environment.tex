@@ -140,6 +140,7 @@ is the latest version, \emph{Spark} and its related components require \emph{Ope
     \end{minted}
 
     \subsection{Restart \emph{ssh} service}
+    \label{sec:sshrestart}
     Run the following command to apply new settings:
     \begin{minted}{bash}
         sudo service ssh restart
@@ -148,6 +149,13 @@ is the latest version, \emph{Spark} and its related components require \emph{Ope
     \begin{minted}{bash}
         ssh: connect to host localhost port 22: Connection refused
     \end{minted}
+
+    \subsection{Verify password-less \emph{ssh} login}
+    Ensure that \emph{localhost} can be accessed via \emph{ssh} without a password:
+    \begin{minted}{bash}
+        ssh localhost
+    \end{minted}
+    If an error message is returned, restart the \emph{ssh} service (section \ref{sec:sshrestart}).
 
 \newpage
 \begin{thebibliography}{9}
