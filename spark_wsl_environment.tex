@@ -40,6 +40,7 @@ is the latest version, \emph{Spark} and its related components require \emph{Ope
     \end{minted}
 
     \subsection{Set \emph{JAVA\_HOME}}
+    \label{sec:javahome}
     \emph{Spark} and other components will need to know the path of the
     \emph{JRE}. This is accomplished by setting the \emph{JAVA\_HOME}
     system variable.
@@ -157,14 +158,190 @@ is the latest version, \emph{Spark} and its related components require \emph{Ope
     \end{minted}
     If an error message is returned, restart the \emph{ssh} service (section \ref{sec:sshrestart}).
 
+\section{\emph{Hadoop}}
+\emph{Apache Hadoop} is a framework that is used to store and process \emph{big data} in distributed systems.
+In this guide, \emph{Hadoop} will be used as a data storage system on a single PC.
+
+    \subsection{Download and extract \emph{Hadoop 3.3.0}}
+    This guide will use the latest stable version, \emph{Hadoop 3.3.0}.
+    
+        \subsubsection{Download \emph{Hadoop}}
+        Run the \emph{wget} command in a terminal to download:
+        \begin{minted}{bash}
+            wget https://apache.osuosl.org/hadoop/common/hadoop-3.3.0/hadoop-3.3.0.tar.gz
+        \end{minted}
+
+        \subsubsection{Extract files}
+        Run the following command in a terminal to extract the \emph{tar.gz} file:
+        \begin{minted}{bash}
+            tar -xvzf hadoop-3.3.0.tar.gz
+        \end{minted}
+        A new directory, \path{hadoop-3.3.0}, should now appear.
+
+        \subsubsection{Copy folder to \emph{/opt}}
+        In \emph{Ubuntu}, \path{/opt} is the directory used to store add-on applications. \emph{Hadoop},
+        \emph{Hive}, and \emph{Spark} will all be stored in this directory. Run the following command to
+        move the extracted \emph{Hive} folder:
+        \begin{minted}{bash}
+            sudo mv hadoop-3.3.0 /opt
+        \end{minted}
+    
+    \subsection{Set \emph{HADOOP\_HOME}}
+    Setting the \emph{HADOOP\_HOME} variable tells the system where \emph{HADOOP} is located.
+
+        \subsubsection{Edit \emph{.bashrc}}
+        \label{subsec:hadoophome}
+        Open the \emph{~/.bashrc} file and add the following line:
+        \begin{minted}{bash}
+            export HADOOP_HOME=/opt/hadoop-3.3.0
+        \end{minted}
+
+        \subsubsection{Reload configuration}
+        Load the new \emph{bash} configuration with the command:
+        \begin{minted}{bash}
+            source ~/.bashrc
+        \end{minted}
+
+        \subsubsection{Verify path}
+        Verify that \emph{HADOOP\_HOME} was correctly set:
+        \begin{minted}{bash}
+            echo $HADOOP_HOME
+        \end{minted}
+        The path should match that in \ref{subsec:hadoophome}.
+
+    \subsection{Edit configuration files}
+    In this section, \emph{Hadoop} will be configured to run in single-node mode (i.e., on a single PC).
+
+        % This section might not be needed if setting JAVA_HOME in .bashrc is enough
+        \subsubsection{Edit \emph{hadoop-env.sh}}
+        Add the \emph{JAVA\_HOME} variable to the \emph{Hadoop} environment, as in section \ref{sec:javahome}.
+
+        \begin{enumerate}
+            \item Open the file \path{/opt/hadoop-3.3.0/etc/hadoop/hadoop-env.sh} with any editor
+            
+            \item Un-comment line \emph{54} and add the correct path:
+            \begin{minted}{bash}
+                # The java implementation to use. By default, this environment
+                # variable is REQUIRED on ALL platforms except OS X!
+                export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+            \end{minted}
+        \end{enumerate}
+
+        \subsubsection{Edit \emph{core-site.xml}}
+        Edit the file \path{/opt/hadoop-3.3.0/etc/hadoop/core-site.xml} to look like the example below:
+        \begin{minted}{xml}
+            <configuration>
+                <property>
+                    <name>fs.defaultFS</name>
+                    <value>hdfs://localhost:9000</value>
+                </property>
+                <property>
+                    <name>hadoop.proxyuser.abe.hosts</name>
+                    <value>*</value>
+                </property>
+                <property>
+                    <name>hadoop.proxyuser.abe.groups</name>
+                    <value>*</value>
+                </property>
+            </configuration>
+        \end{minted}
+        Replace \emph{abe} above with your own \emph{WSL} system username.
+
+        \subsubsection{Edit \emph{hdfs-site.xml}}
+        Edit the file \path{/opt/hadoop-3.3.0/etc/hadoop/hdfs-site.xml} to look like the example below:
+        \begin{minted}{xml}
+            <configuration>
+                <property>
+                    <name>dfs.replication</name>
+                    <value>1</value>
+                </property>
+            </configuration>
+        \end{minted}
+        
+        \subsubsection{Edit \emph{mapred-site.xml}}
+        Edit the file \path{/opt/hadoop-3.3.0/etc/hadoop/mapred-site.xml} to look like the example below:
+        % Verify that splitting the <value> into two lines works
+        \begin{minted}{xml}
+            <configuration>
+                <property>
+                    <name>mapreduce.framework.name</name>
+                    <value>yarn</value>
+                </property>
+                <property>
+                    <name>mapreduce.application.classpath</name>
+                    <value>
+                        $HADOOP_MAPRED_HOME/share/hadoop/mapreduce/*:
+                        $HADOOP_MAPRED_HOME/share/hadoop/mapreduce/lib/*
+                    </value>
+                </property>
+            </configuration>
+        \end{minted}
+        
+        \subsubsection{Edit \emph{yarn-site.xml}}
+        Edit the file \path{/opt/hadoop-3.3.0/etc/hadoop/yarn-site.xml} to look like the example below:
+        % Verify that splitting the <value> into two lines works
+        \begin{minted}{xml}
+            <configuration>
+                <property>
+                    <name>yarn.nodemanager.aux-services</name>
+                    <value>mapreduce_shuffle</value>
+                </property>
+                <property>
+                    <name>yarn.nodemanager.env-whitelist</name>
+                    <value>
+                        JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,
+                        HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,
+                        HADOOP_YARN_HOME,HADOOP_MAPRED_HOME
+                    </value>
+                </property>
+            </configuration>
+        \end{minted}
+
+    \subsection{Format \emph{HDFS}}
+    Format the \emph{Hadoop Distributed File System} (\emph{HDFS}) with the command:
+    \begin{minted}{bash}
+        /opt/hadoop-3.3.0/bin/hdfs namenode -format
+    \end{minted}
+    The \emph{hdfs} command will output several lines of \emph{INFO} messages.
+
+    \subsection{Start \emph{NameNode} and \emph{DataNode} daemons}
+    The daemons allow a web interface containing \emph{Hadoop} system stats to run. To start both
+    daemons, run the command:
+    \begin{minted}{bash}
+        /opt/hadoop-3.3.0/sbin/start-dfs.sh
+    \end{minted}
+    The above command might return a \emph{connection refused} error. If this occurs, restart
+    the \emph{ssh} service (see section \ref{sec:sshrestart}).
+    
+    The web interface should now be accessible via \url{http://localhost:9870/}.
+
+    \subsection{Start \emph{YARN} daemon}
+    \emph{YARN} acts as a resource manager in a \emph{Hadoop} system. To start the \emph{YARN} daemon,
+    run the command:
+    \begin{minted}{bash}
+        /opt/hadoop-3.3.0/sbin/start-yarn.sh
+    \end{minted}
+    A resource manager web interface should now be accessible via \url{http://localhost:8088/}.
+
 \newpage
 \begin{thebibliography}{9}
-
     \bibitem{postgres_metastore}
-        Hewlett Packard Enterprise Development LP,
-        \textit{Configuring a Remote PostgreSQL Database for the Hive Metastore},
-        2020,
-        \url{https://docs.datafabric.hpe.com/61/Hive/Config-RemotePostgreSQLForHiveMetastore.html}
+    Hewlett Packard Enterprise Development LP,
+    \textit{Configuring a Remote PostgreSQL Database for the Hive Metastore},
+    2020,
+    \url{https://docs.datafabric.hpe.com/61/Hive/Config-RemotePostgreSQLForHiveMetastore.html}
+    
+    \bibitem{hadoop_install}
+    Raymond Tang,
+    \textit{Install Hadoop 3.2.0 on Windows 10 using Windows Subsystem for Linux (WSL)},
+    2018,
+    \url{https://kontext.tech/column/hadoop/307/install-hadoop-320-on-windows-10-using-windows-subsystem-for-linux-wsl}
+
+    \bibitem{ubuntu_install}
+    Debian Installer Team,
+    \textit{Ubuntu Installation Guide},
+    2020,
+    \url{https://help.ubuntu.com/lts/installation-guide/amd64/index.html}
 \end{thebibliography}
 
 \end{document}
