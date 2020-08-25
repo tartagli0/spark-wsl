@@ -1,7 +1,7 @@
 \documentclass{article}
 
 \usepackage{minted}
-\usepackage{url}
+\usepackage[hyphens]{url}
 \usepackage{microtype}
 \usepackage{hyperref}
 \hypersetup{
@@ -423,6 +423,21 @@ is provided by \emph{PostgreSQL} (section \ref{sec:postgres}).
             cp hive-default.xml.template hive-site.xml
         \end{minted}
 
+        \subsubsection{Prevent \emph{URISyntaxException}}
+        To prevent a \emph{Java URISyntaxException} from being returned when attempting to run \emph{Hive}
+        services (see section \ref{subsec:hiveservices}), add the following lines to the beginning of
+        \emph{hive-site.xml}:
+        \begin{minted}{xml}
+            <property>
+                <name>system:java.io.tmpdir</name>
+                <value>/tmp/hive/java</value>
+            </property>
+            <property>
+                <name>system:user.name</name>
+                <value>${user.name}</value>
+            </property>
+        \end{minted}
+
         \subsubsection{Edit configuration settings}
         Edit the following values in the \emph{hive-site.xml} file at the lines shown below:
         \begin{minted}[numbers=left, firstnumber=461]{xml}
@@ -485,6 +500,27 @@ is provided by \emph{PostgreSQL} (section \ref{sec:postgres}).
         /opt/apache-hive-3.1.2-bin/bin/schematool -dbType postgres -initSchema
     \end{minted}
 
+    \subsection{Start \emph{Hive} services}
+    \label{subsec:hiveservices}
+    In order to use \emph{Hive}, its metastore service must be started. \emph{Hive} also provides
+    a web interface with information on running sessions, queries, etc.
+
+        \subsubsection{Initialize \emph{Hive} metastore service}
+        Run the following command in a terminal to start \emph{Hive} metastore services:
+        \begin{minted}{bash}
+            $HIVE_HOME/bin/hive --service metastore
+        \end{minted}
+
+        \subsubsection{Initialize \emph{Hive} server}
+        Open another terminal and run the following command to Initialize the \emph{Hive} server:
+        \begin{minted}{bash}
+            $HIVE_HOME/bin/hive --service hiveserver2
+        \end{minted}
+
+        \subsubsection{Access web interface}
+        After about one minute of running both metastore and \emph{Hive} server, access the web
+        interface via \url{http://localhost:10002/}
+
 \newpage
 \begin{thebibliography}{9}
     \bibitem{postgres_metastore}
@@ -510,6 +546,18 @@ is provided by \emph{PostgreSQL} (section \ref{sec:postgres}).
     \textit{Hive Issue 22915},
     2020,
     \url{https://issues.apache.org/jira/browse/HIVE-22915}
+
+    \bibitem{hive}
+    Raymond Tang,
+    \textit{Apache Hive 3.1.1 Installation on Windows 10 using Windows Subsystem for Linux},
+    2018,
+    \url{https://kontext.tech/column/hadoop/309/apache-hive-311-installation-on-windows-10-using-windows-subsystem-for-linux}
+
+    \bibitem{hive_error_fix}
+    Vu Duc Tiep,
+    \textit{[Hive Installation] java.net.URISyntaxException: Relative path in absolute URI},
+    2017,
+    \url{http://driftingengineer.blogspot.com/2017/09/hive-installation-javaneturisyntaxexcep.html}
 \end{thebibliography}
 
 \end{document}
