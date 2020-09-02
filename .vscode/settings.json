@@ -163,8 +163,5 @@
         "tmpdir",
         "xlock",
         "xvzf"
-    ],
-    "terminal.integrated.shell.windows": "C:\\Windows\\System32\\wsl.exe",
-    "terminal.integrated.shellArgs.windows": ["--distribution", "Ubuntu-18.04"],
-    "terminal.integrated.cwd": "\\\\wsl$\\Ubuntu-18.04\\home\\abe"
+    ]
 }
