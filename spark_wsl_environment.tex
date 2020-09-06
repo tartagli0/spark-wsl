@@ -21,102 +21,108 @@
 \tableofcontents
 \newpage
 
-\section{\emph{Windows Subsystem for Linux}}
-\emph{Windows Subsystem for Linux} (\emph{WSL}) allows \emph{Linux} a distribution (distro) to
-run concurrently with \emph{Windows 10}. \emph{WSL 2} now includes a \emph{Linux}
-kernel and is several times faster than the original \emph{WSL}. This guide assumes that \emph{WSL 2}
-is installed and is running the \emph{Ubuntu 18.04} distro. To install \emph{WSL 2}, follow the
-\href{https://docs.microsoft.com/en-us/windows/wsl/install-win10}{Windows Subsystem for Linux Installation Guide for Windows 10}.
-Make sure to use \emph{Ubuntu 18.04} as the distro.
+\section{Prerequisites}
+Before installing \emph{Spark} and its related components \emph{Hadoop} and \emph{Hive}, several
+software, configuration, and other requirements must be met.
 
-\section{Java}
-\emph{Spark}, \emph{Hadoop}, and \emph{Hive} all require a \emph{Java Runtime Environment}(\emph{JRE}).
-\emph{OpenJDK} is a standard package in most \emph{Linux} distributions. Though \emph{OpenJDK 11}
-is the latest version, \emph{Spark} and its related components require \emph{OpenJDK 8}.
+    \subsection{Windows Subsystem for Linux}
+    \emph{Windows Subsystem for Linux} (\emph{WSL}) allows \emph{Linux} a distribution (distro) to
+    run concurrently with \emph{Windows 10}. \emph{WSL 2} now includes a \emph{Linux}
+    kernel and is several times faster than the original \emph{WSL}. This guide assumes that \emph{WSL 2}
+    is installed and is running the \emph{Ubuntu 18.04} distro. To install \emph{WSL 2}, follow the
+    \href{https://docs.microsoft.com/en-us/windows/wsl/install-win10}{Windows Subsystem for Linux Installation
+    Guide for Windows 10}. Make sure to use \emph{Ubuntu 18.04} as the distro.
 
-    \subsection{Install \emph{JRE}}
-    To install \emph{OpenJDK 8}, run the following command in a terminal:
-    \begin{minted}{bash}
-        sudo apt install openjdk-8-jre-headless openjdk-8-jdk-headless  
-    \end{minted}
+    \subsection{Java}
+    \emph{Spark}, \emph{Hadoop}, and \emph{Hive} all require a \emph{Java Runtime Environment}(\emph{JRE}).
+    \emph{OpenJDK} is the standard \emph{Java} platform for most \emph{Linux} distributions. Though \emph{OpenJDK 11}
+    is the latest version, \emph{Spark} and its related components require \emph{OpenJDK 8}.
 
-    \subsection{Set \emph{JAVA\_HOME}}
-    \label{sec:javahome}
-    \emph{Spark} and other components will need to know the path of the
-    \emph{JRE}. This is accomplished by setting the \emph{JAVA\_HOME}
-    system variable.
-
-    \begin{description}
-        \item[Open] the \emph{.bashrc} file with any editor (e.g., \emph{vim}, \emph{nano}).
-        For example:
+        \subsubsection{Install \emph{JRE}}
+        To install \emph{OpenJDK 8}, run the following command in a terminal:
         \begin{minted}{bash}
-            vim ~/.bashrc
+            sudo apt install openjdk-8-jre-headless openjdk-8-jdk-headless  
         \end{minted}
 
-        \item[Add] the following line to the \emph{.bashrc} file:
+        \subsubsection{Set \emph{JAVA\_HOME}}
+        \label{subsec:javahome}
+        \emph{Spark} and other components will need to know the path of the
+        \emph{JRE}. This is accomplished by setting the \emph{JAVA\_HOME}
+        system variable.
+
+        \begin{enumerate}
+            \item Open the \emph{.bashrc} file with any editor (e.g., \emph{vim}, \emph{nano}).
+            For example:
+            \begin{minted}{bash}
+                vim ~/.bashrc
+            \end{minted}
+            
+            \item Add the following line to the \emph{.bashrc} file:
+            \label{itm:javahome}
+            \begin{minted}{bash}
+                export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64                 
+            \end{minted}
+            
+            \item Reload shell environment configuration:
+            \begin{minted}{bash}
+                source ~/.bashrc
+            \end{minted}
+            
+            \item Verify that path was correctly set:
+            \begin{minted}{bash}
+                echo $JAVA_HOME
+            \end{minted}
+            The output should match that in step \ref{itm:javahome}.
+        \end{enumerate}
+
+    \subsection{PostgreSQL}
+    \label{subsec:postgres}
+    \emph{Hive} requires a database for its metastore. In terms of open-source options, \emph{Hive} can use
+    \emph{MySQL}, \emph{PostgreSQL}, and \emph{Derby}. This guide will use \emph{PostgreSQL}.
+
+        \subsubsection{Install \emph{PostgreSQL}}
+        \emph{PostgreSQL 10} is the default version packaged for \emph{Ubuntu 18.04}. Install
+        \emph{PostgreSQL 10} with the command:
         \begin{minted}{bash}
-            export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64                 
+            sudo apt install postgresql-10
         \end{minted}
-        
-        \item[Reload] shell environment configuration:
+
+        \subsubsection{Start database server}
+        \label{subsec:pgsstart}
+        The \emph{PostgreSQL} will need to be started every time \emph{WSL} is started. Initialize the
+        server using the command:
         \begin{minted}{bash}
-            source ~/.bashrc
+            sudo service postgresql start
         \end{minted}
 
-        \item[Verify] that path was correctly set:
-        \begin{minted}{bash}
-            echo $JAVA_HOME
-        \end{minted}
-    \end{description}
+        \subsubsection{Configure \emph{Hive} metastore}
+        The \emph{psql} application is used to interact with \emph{PostgreSQL} in a terminal.
+        \begin{description}
+            \item[Log into] \emph{PostgreSQL} via \emph{psql} with default user \emph{postgres}:
+            \begin{minted}{bash}
+                sudo -u postgres psql 
+            \end{minted}
 
-\section{\emph{PostgreSQL}}
-\label{sec:postgres}
-\emph{Hive} requires a database for its metastore. In terms of open-source options, \emph{Hive} can use
-\emph{MySQL}, \emph{PostgreSQL}, and \emph{Derby}. This guide will use \emph{PostgreSQL}.
+            \item[Add] new user \emph{hive}
+            (for simplicity, the new user will also be given \emph{hive} as the password):
+            \begin{minted}{postgres}
+                CREATE USER hive WITH PASSWORD 'hive';
+            \end{minted}
 
-    \subsection{Install \emph{PostgreSQL}}
-    \emph{PostgreSQL 10} is the default version packaged for \emph{Ubuntu 18.04}. Install
-    \emph{PostgreSQL 10} with the command:
-    \begin{minted}{bash}
-        sudo apt install postgresql-10
-    \end{minted}
+            \item[Create] new database for \emph{Hive} metastore:
+            \begin{minted}{postgres}
+                CREATE DATABASE hive_metastore;
+            \end{minted}
 
-    \subsection{Start database server}
-    \label{subsec:pgsstart}
-    The \emph{PostgreSQL} will need to be started every time \emph{WSL} is started. Initialize the
-    server using the command:
-    \begin{minted}{bash}
-        sudo service postgresql start
-    \end{minted}
+            \item[Give] ownership of \emph{hive\_metastore} database to user \emph{hive}:
+            \begin{minted}{postgres}
+                ALTER DATABASE hive_metastore OWNER TO hive;
+            \end{minted}
 
-    \subsection{Configure \emph{Hive} metastore}
-    The \emph{psql} application is used to interact with \emph{PostgreSQL} in a terminal.
-    \begin{description}
-        \item[Log into] \emph{PostgreSQL} via \emph{psql} with default user \emph{postgres}:
-        \begin{minted}{bash}
-            sudo -u postgres psql 
-        \end{minted}
+            \item[Exit] \emph{psql} with the command: \mintinline{psql}{\q}
+        \end{description}
 
-        \item[Add] new user \emph{hive}
-        (for simplicity, the new user will also be given \emph{hive} as the password):
-        \begin{minted}{postgres}
-            CREATE USER hive WITH PASSWORD 'hive';
-        \end{minted}
-
-        \item[Create] new database for \emph{Hive} metastore:
-        \begin{minted}{postgres}
-            CREATE DATABASE hive_metastore;
-        \end{minted}
-
-        \item[Give] ownership of \emph{hive\_metastore} database to user \emph{hive}:
-        \begin{minted}{postgres}
-            ALTER DATABASE hive_metastore OWNER TO hive;
-        \end{minted}
-
-        \item[Exit] \emph{psql} with the command: \mintinline{psql}{\q}
-    \end{description}
-
-    \subsection{Install \emph{Java Database Connectivity} Drivers}
+    \subsubsection{Install \emph{Java Database Connectivity} Drivers}
     The \emph{Java Database Connectivity} (\emph{JDBC}) drivers allow \emph{Java} to interact with
     databases. As \emph{Hive} runs in \emph{Java}, it requires the \emph{PostgreSQL JDBC} drivers.
     Install the drivers drivers in \emph{Ubuntu} via the following command:
@@ -124,42 +130,42 @@ is the latest version, \emph{Spark} and its related components require \emph{Ope
         sudo apt install libpostgresql-jdbc-java
     \end{minted}
 
-\section{SSH Key}
-\emph{Secure Shell} (\emph{SSH}) encrypts communications over insecure networks. To accomplish encryption
-\emph{SSH} utilizes public and private keys.
+    \subsection{SSH Key}
+    \emph{Secure Shell} (\emph{SSH}) encrypts communications over insecure networks. To accomplish encryption
+    \emph{SSH} utilizes public and private keys.
 
-    \subsection{Generate key}
-     Generate] an \emph{ssh key} with the following command:
+        \subsubsection{Generate key}
+        Generate] an \emph{ssh key} with the following command:
+            \begin{minted}{bash}
+                ssh-keygen -t rsa
+            \end{minted}
+        Leave the password blank when prompted, as \emph{Hadoop} will utilize a password-less \emph{ssh}
+        login.
+
+        \subsubsection{Allow \emph{localhost} login}
+        \emph{Hadoop} requires the ability to log into the \emph{localhost} (i.e., your local PC) via
+        password-less \emph{ssh}. To accomplish this, run the following command:
         \begin{minted}{bash}
-            ssh-keygen -t rsa
+            cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
         \end{minted}
-    Leave the password blank when prompted, as \emph{Hadoop} will utilize a password-less \emph{ssh}
-    login.
 
-    \subsection{Allow \emph{localhost} login}
-    \emph{Hadoop} requires the ability to log into the \emph{localhost} (i.e., your local PC) via
-    password-less \emph{ssh}. To accomplish this, run the following command:
-    \begin{minted}{bash}
-        cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-    \end{minted}
+        \subsubsection{Restart \emph{ssh} service}
+        \label{subsec:sshrestart}
+        Run the following command to apply new settings:
+        \begin{minted}{bash}
+            sudo service ssh restart
+        \end{minted}
+        This command must be re-executed any time the following error message is encountered:
+        \begin{minted}{bash}
+            ssh: connect to host localhost port 22: Connection refused
+        \end{minted}
 
-    \subsection{Restart \emph{ssh} service}
-    \label{subsec:sshrestart}
-    Run the following command to apply new settings:
-    \begin{minted}{bash}
-        sudo service ssh restart
-    \end{minted}
-    This command must be re-executed any time the following error message is encountered:
-    \begin{minted}{bash}
-        ssh: connect to host localhost port 22: Connection refused
-    \end{minted}
-
-    \subsection{Verify password-less \emph{ssh} login}
-    Ensure that \emph{localhost} can be accessed via \emph{ssh} without a password:
-    \begin{minted}{bash}
-        ssh localhost
-    \end{minted}
-    If an error message is returned, restart the \emph{ssh} service (section \ref{subsec:sshrestart}).
+        \subsubsection{Verify password-less \emph{ssh} login}
+        Ensure that \emph{localhost} can be accessed via \emph{ssh} without a password:
+        \begin{minted}{bash}
+            ssh localhost
+        \end{minted}
+        If an error message is returned, restart the \emph{ssh} service (section \ref{subsec:sshrestart}).
 
 \section{\emph{Hadoop}}
 \emph{Apache Hadoop} is a framework that is used to store and process \emph{big data} in distributed systems.
@@ -231,9 +237,8 @@ In this guide, \emph{Hadoop} will be used as a data storage system on a single P
     \subsection{Edit configuration files}
     In this section, \emph{Hadoop} will be configured to run in single-node mode (i.e., on a single PC).
 
-        % This section might not be needed if setting JAVA_HOME in .bashrc is enough
         \subsubsection{Edit \emph{hadoop-env.sh}}
-        Add the \emph{JAVA\_HOME} variable to the \emph{Hadoop} environment, as in section \ref{sec:javahome}.
+        Add the \emph{JAVA\_HOME} variable to the \emph{Hadoop} environment, as in section \ref{subsec:javahome}.
 
         \begin{enumerate}
             \item Open the file \path{/opt/hadoop-3.3.0/etc/hadoop/hadoop-env.sh} with any editor
@@ -343,7 +348,7 @@ In this guide, \emph{Hadoop} will be used as a data storage system on a single P
 \section{Hive}
 \emph{Apache Hive} is a data warehousing application that utilizes \emph{SQL} to interact with
 data residing in distributed systems. \emph{Hive} requires a metastore service, which in this case
-is provided by \emph{PostgreSQL} (section \ref{sec:postgres}).
+is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
 
     \subsection{Download and extract \emph{Hive}}
     This guide will use the current latest stable version, \emph{Apache Hive 3.1.2}.
@@ -414,7 +419,7 @@ is provided by \emph{PostgreSQL} (section \ref{sec:postgres}).
 
     \subsection{Edit \emph{hive-site.xml}}
     The \emph{hive-site.xml} file contains required configuration settings for the \emph{Hive} metastore.
-    In this setup, the metastore resides within a \emph{PostgreSQL} database (see section \ref{sec:postgres}).
+    In this setup, the metastore resides within a \emph{PostgreSQL} database (see section \ref{subsec:postgres}).
 
         \subsubsection{Create file}
         Copy file \emph{hive-default.xml.template} and rename it as \emph{hive-site.xml}:
@@ -700,6 +705,8 @@ accomplished manually each time, or by the use of a script for automation.
             nohup hive --service hiveserver2 > .hiveserver &
             $SPARK_HOME/sbin/start-history-server.sh  
         \end{minted}
+    Notice that the script above uses \href{https://en.wikipedia.org/wiki/Nohup}{nohup}. This is to
+    avoid having to open multiple terminals for the \emph{Hive} services to run in.
     
     \item Save the script as \emph{start-all-spark} (or any other name you'd like to give it)
 
