@@ -82,6 +82,7 @@ is the latest version, \emph{Spark} and its related components require \emph{Ope
     \end{minted}
 
     \subsection{Start database server}
+    \label{subsec:pgsstart}
     The \emph{PostgreSQL} will need to be started every time \emph{WSL} is started. Initialize the
     server using the command:
     \begin{minted}{bash}
@@ -278,7 +279,6 @@ In this guide, \emph{Hadoop} will be used as a data storage system on a single P
         
         \subsubsection{Edit \emph{mapred-site.xml}}
         Edit the file \path{/opt/hadoop-3.3.0/etc/hadoop/mapred-site.xml} to look like the example below:
-        % Verify that splitting the <value> into two lines works
         \begin{minted}{xml}
             <configuration>
                 <property>
@@ -297,7 +297,6 @@ In this guide, \emph{Hadoop} will be used as a data storage system on a single P
         
         \subsubsection{Edit \emph{yarn-site.xml}}
         Edit the file \path{/opt/hadoop-3.3.0/etc/hadoop/yarn-site.xml} to look like the example below:
-        % Verify that splitting the <value> into two lines works
         \begin{minted}{xml}
             <configuration>
                 <property>
@@ -392,6 +391,7 @@ is provided by \emph{PostgreSQL} (section \ref{sec:postgres}).
     \end{enumerate}
 
     \subsection{Initialize all \emph{Hadoop} services}
+    \label{subsec:hadoopall}
     As \emph{Hive} manages data in a \emph{Hadoop} system, the latter must be running.
     Run the following command in a terminal to start all \emph{Hadoop} services:
     \begin{minted}{bash}
@@ -600,10 +600,119 @@ With \emph{Hadoop} and \emph{Hive} configured, we can finally set up and use \em
                 hadoop fs -chmod g+w /spark-logs
             \end{minted}
 
+            \subsubsection{Start \emph{Spark} history server}
+            \label{subsec:sparklog}
+            Run the following command to start history log server:
+            \begin{minted}{bash}
+                $SPARK_HOME/sbin/start-history-server.sh
+            \end{minted}
+
             \subsubsection{Access web interface}
             The web interface can now be accessed via \url{http://localhost:18080/}. The page will
             display a warning the first time it's accessed. This warning can be safely ignored and will
             not appear after Spark jobs are run.
+
+        \subsection{\emph{Spark} Shells}
+        \emph{Spark} provides multiple shells that utilize different programming and scripting languages.
+
+            \subsubsection{Scala}
+            The default shell uses \emph{Scala} as a \emph{Spark} interface. \emph{Scala} is included
+            with \emph{Spark} and only requires a \emph{JRE}. Entering the command below will start
+            the default \emph{Scala} shell:
+            \begin{minted}{bash}
+                spark-shell
+            \end{minted}
+
+            \subsubsection{Spark SQL}
+            \emph{Spark} includes \emph{Spark SQL}, which utilizes \emph{HiveSQL} syntax. To start
+            a \emph{Spark SQL} shell, run the command:
+            \begin{minted}{bash}
+                spark-sql
+            \end{minted}
+
+            \subsubsection{Python}
+            \emph{PySpark} is \emph{Spark's} interface for the \emph{Python} scripting language.
+            Before using \emph{PySpark}, \emph{Python} must first be installed and configured.
+            These tasks are beyond the scope of this documentation. The command below will initialize
+            a \emph{Python} shell:
+            \begin{minted}{bash}
+                pyspark
+            \end{minted}
+
+            \subsubsection{R}
+            \emph{Spark} also has an \emph{R} interface, \emph{SparkR}. Before utilizing the \emph{SparkR}
+            shell, \emph{R} must first be installed and configured, which is beyond the scope of this
+            documentation. Run the following command to start a \emph{SparkR} shell:
+            \begin{minted}{bash}
+                sparkR
+            \end{minted}
+
+\newpage
+\section{Putting It All Together}
+Now that \emph{Spark} and all other necessary components are installed and configured, they must be
+activated every time when starting a new \emph{Windows} session. Activating all components can be
+accomplished manually each time, or by the use of a script for automation.
+
+    \subsection{Option 1: Manual activation}
+    To manually start all components required for using a \emph{Spark} shell, the following steps
+    must be performed in order:
+    \begin{enumerate}
+        \item Start \emph{PostgreSQL} server (section \ref{subsec:pgsstart})
+        \begin{minted}{bash}
+            sudo service postgresql start`
+        \end{minted}
+
+        \item Restart \emph{SSH} service (section \ref{subsec:sshrestart})
+        \begin{minted}{bash}
+            sudo service ssh restart
+        \end{minted}
+
+        \item Start all \emph{Hadoop} services (section \ref{subsec:hadoopall})
+        \begin{minted}{bash}
+            $HADOOP_HOME/sbin/start-all.sh
+        \end{minted}
+
+        \item Start \emph{Hive} \emph{metastore} and server (section \ref{subsec:hiveservices}).
+        The commands below must be run in \textbf{new} and \textbf{separate} terminals:
+        \begin{minted}{bash}
+            hive --service metastore
+            hive --service hiveserver2
+        \end{minted}
+
+        \item Start \emph{Spark} history server (\ref{subsec:sparklog}):
+        \begin{minted}{bash}
+            $SPARK_HOME/sbin/start-history-server.sh
+        \end{minted}
+    \end{enumerate}
+
+    \subsection{Option 2: Script automation}
+    As an alternative to performing the steps above every time before being able to use \emph{Spark},
+    you can create a simple \emph{Bash} shell script.
+    \begin{enumerate}
+    \item Open an editor and enter the following lines:
+        \begin{minted}{bash}
+            #! /bin/bash
+
+            sudo service postgresql start
+            sudo service ssh restart
+            $HADOOP_HOME/sbin/start-all.sh
+            nohup hive --service metastore > .hivemetastore &
+            nohup hive --service hiveserver2 > .hiveserver &
+            $SPARK_HOME/sbin/start-history-server.sh  
+        \end{minted}
+    
+    \item Save the script as \emph{start-all-spark} (or any other name you'd like to give it)
+
+    \item Make the file executable with the command:
+    \begin{minted}{bash}
+        chmod +x start-all-spark
+    \end{minted}
+
+    \item Run the script to start all services required for using \emph{Spark}:
+    \begin{minted}{bash}
+        ./start-all-spark
+    \end{minted}
+\end{enumerate}
 
 \newpage
 \begin{thebibliography}{9}
