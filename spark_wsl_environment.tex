@@ -77,7 +77,7 @@ software, configuration, and other requirements must be met.
 
     \subsection{PostgreSQL}
     \label{subsec:postgres}
-    \emph{Hive} requires a database for its metastore. In terms of open-source options, \emph{Hive} can use
+    \emph{Hive} requires a database for its \emph{metastore}. In terms of open-source options, \emph{Hive} can use
     \emph{MySQL}, \emph{PostgreSQL}, and \emph{Derby}. This guide will use \emph{PostgreSQL}.
 
         \subsubsection{Install \emph{PostgreSQL}}
@@ -89,43 +89,43 @@ software, configuration, and other requirements must be met.
 
         \subsubsection{Start database server}
         \label{subsec:pgsstart}
-        The \emph{PostgreSQL} will need to be started every time \emph{WSL} is started. Initialize the
+        The \emph{PostgreSQL} will need to be started every time \emph{Hive} is started. Initialize the
         server using the command:
         \begin{minted}{bash}
             sudo service postgresql start
         \end{minted}
 
-        \subsubsection{Configure \emph{Hive} metastore}
+        \subsubsection{Configure \emph{Hive metastore}}
         The \emph{psql} application is used to interact with \emph{PostgreSQL} in a terminal.
-        \begin{description}
-            \item[Log into] \emph{PostgreSQL} via \emph{psql} with default user \emph{postgres}:
+        \begin{enumerate}
+            \item Log into \emph{PostgreSQL} via \emph{psql} with default user \emph{postgres}:
             \begin{minted}{bash}
                 sudo -u postgres psql 
             \end{minted}
 
-            \item[Add] new user \emph{hive}
+            \item Add new user \emph{hive}
             (for simplicity, the new user will also be given \emph{hive} as the password):
             \begin{minted}{postgres}
                 CREATE USER hive WITH PASSWORD 'hive';
             \end{minted}
 
-            \item[Create] new database for \emph{Hive} metastore:
+            \item Create new database for \emph{Hive metastore}:
             \begin{minted}{postgres}
                 CREATE DATABASE hive_metastore;
             \end{minted}
 
-            \item[Give] ownership of \emph{hive\_metastore} database to user \emph{hive}:
+            \item Give ownership of \emph{hive\_metastore} database to user \emph{hive}:
             \begin{minted}{postgres}
                 ALTER DATABASE hive_metastore OWNER TO hive;
             \end{minted}
 
-            \item[Exit] \emph{psql} with the command: \mintinline{psql}{\q}
-        \end{description}
+            \item Exit \emph{psql} with the command: \mintinline{psql}{\q}
+        \end{enumerate}
 
     \subsubsection{Install \emph{Java Database Connectivity} Drivers}
     The \emph{Java Database Connectivity} (\emph{JDBC}) drivers allow \emph{Java} to interact with
     databases. As \emph{Hive} runs in \emph{Java}, it requires the \emph{PostgreSQL JDBC} drivers.
-    Install the drivers drivers in \emph{Ubuntu} via the following command:
+    Install the drivers in \emph{Ubuntu} via the following command:
     \begin{minted}{bash}
         sudo apt install libpostgresql-jdbc-java
     \end{minted}
@@ -135,7 +135,7 @@ software, configuration, and other requirements must be met.
     \emph{SSH} utilizes public and private keys.
 
         \subsubsection{Generate key}
-        Generate] an \emph{ssh key} with the following command:
+        Generate an \emph{ssh key} with the following command:
             \begin{minted}{bash}
                 ssh-keygen -t rsa
             \end{minted}
@@ -151,14 +151,22 @@ software, configuration, and other requirements must be met.
 
         \subsubsection{Restart \emph{ssh} service}
         \label{subsec:sshrestart}
-        Run the following command to apply new settings:
+        Restart \emph{SSH} and apply new settings:
         \begin{minted}{bash}
             sudo service ssh restart
         \end{minted}
-        This command must be re-executed any time the following error message is encountered:
+        \textbf{Note}: This command must be re-executed any time the following error message is encountered:
         \begin{minted}{bash}
             ssh: connect to host localhost port 22: Connection refused
         \end{minted}
+
+        \subsubsection{\emph{Could not load host key error}}
+        If restarting the \emph{SSH} service returns \emph{Could not load host key} errors, run the
+        following command:
+        \begin{minted}{bash}
+            ssh-keygen -A
+        \end{minted}
+        Rerunning the command in \ref{subsec:sshrestart} should now complete without errors.
 
         \subsubsection{Verify password-less \emph{ssh} login}
         Ensure that \emph{localhost} can be accessed via \emph{ssh} without a password:
@@ -167,9 +175,9 @@ software, configuration, and other requirements must be met.
         \end{minted}
         If an error message is returned, restart the \emph{ssh} service (section \ref{subsec:sshrestart}).
 
-\section{\emph{Hadoop}}
+\section{Hadoop}
 \emph{Apache Hadoop} is a framework that is used to store and process \emph{big data} in distributed systems.
-In this guide, \emph{Hadoop} will be used as a data storage system on a single PC.
+In this setup guide, \emph{Hadoop} will be used as a data storage system on a single PC.
 
     \subsection{Download and extract \emph{Hadoop 3.3.0}}
     This guide will use the latest stable version, \emph{Hadoop 3.3.0}.
@@ -181,7 +189,7 @@ In this guide, \emph{Hadoop} will be used as a data storage system on a single P
         \end{minted}
 
         \subsubsection{Extract files}
-        Run the following command in a terminal to extract the \emph{tar.gz} file:
+        Run the following command to extract the \emph{tar.gz} file:
         \begin{minted}{bash}
             tar -xvzf hadoop-3.3.0.tar.gz
         \end{minted}
@@ -217,7 +225,7 @@ In this guide, \emph{Hadoop} will be used as a data storage system on a single P
         \begin{minted}{bash}
             echo $HADOOP_HOME
         \end{minted}
-        The path should match that in \ref{subsec:hadoophome}.
+        The output should match the path in \ref{subsec:hadoophome}.
     
     \subsection{Add \emph{Hadoop} to system path}
     In order to run \emph{Hadoop} commands without having to specify a full path, e.g.,
@@ -230,7 +238,7 @@ In this guide, \emph{Hadoop} will be used as a data storage system on a single P
     \end{minted}
     add the following line to $\sim$/.bashrc:
     \begin{minted}{bash}
-        export PATH=$PATH:$HADOOP_HOME/bin
+        PATH=$PATH:$HADOOP_HOME/bin
     \end{minted}
     Make sure to reload the \emph{Bash} configuration as in section \ref{subsec:reloadbash}.
 
@@ -245,92 +253,92 @@ In this guide, \emph{Hadoop} will be used as a data storage system on a single P
             
             \item Un-comment line \emph{54} and add the correct path:
             \begin{minted}{bash}
-                # The java implementation to use. By default, this environment
-                # variable is REQUIRED on ALL platforms except OS X!
-                export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+              # The java implementation to use. By default, this environment
+              # variable is REQUIRED on ALL platforms except OS X!
+              export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
             \end{minted}
         \end{enumerate}
 
         \subsubsection{Edit \emph{core-site.xml}}
         Edit the file \path{/opt/hadoop-3.3.0/etc/hadoop/core-site.xml} to look like the example below:
         \begin{minted}{xml}
-            <configuration>
-                <property>
-                    <name>fs.defaultFS</name>
-                    <value>hdfs://localhost:9000</value>
-                </property>
-                <property>
-                    <name>hadoop.proxyuser.abe.hosts</name>
-                    <value>*</value>
-                </property>
-                <property>
-                    <name>hadoop.proxyuser.abe.groups</name>
-                    <value>*</value>
-                </property>
-            </configuration>
+        <configuration>
+          <property>
+            <name>fs.defaultFS</name>
+            <value>hdfs://localhost:9000</value>
+          </property>
+          <property>
+            <name>hadoop.proxyuser.abe.hosts</name>
+            <value>*</value>
+          </property>
+          <property>
+            <name>hadoop.proxyuser.abe.groups</name>
+            <value>*</value>
+          </property>
+        </configuration>
         \end{minted}
-        Replace \emph{abe} above with your own \emph{WSL} system username.
+        Replace \emph{abe} above with your own \emph{WSL Linux} username.
 
         \subsubsection{Edit \emph{hdfs-site.xml}}
         Edit the file \path{/opt/hadoop-3.3.0/etc/hadoop/hdfs-site.xml} to look like the example below:
         \begin{minted}{xml}
-            <configuration>
-                <property>
-                    <name>dfs.replication</name>
-                    <value>1</value>
-                </property>
-            </configuration>
+        <configuration>
+          <property>
+            <name>dfs.replication</name>
+            <value>1</value>
+          </property>
+        </configuration>
         \end{minted}
         
         \subsubsection{Edit \emph{mapred-site.xml}}
         Edit the file \path{/opt/hadoop-3.3.0/etc/hadoop/mapred-site.xml} to look like the example below:
         \begin{minted}{xml}
-            <configuration>
-                <property>
-                    <name>mapreduce.framework.name</name>
-                    <value>yarn</value>
-                </property>
-                <property>
-                    <name>mapreduce.application.classpath</name>
-                    <value>
-                        $HADOOP_MAPRED_HOME/share/hadoop/mapreduce/*:
-                        $HADOOP_MAPRED_HOME/share/hadoop/mapreduce/lib/*
-                    </value>
-                </property>
-            </configuration>
+        <configuration>
+          <property>
+            <name>mapreduce.framework.name</name>
+            <value>yarn</value>
+          </property>
+          <property>
+            <name>mapreduce.application.classpath</name>
+            <value>
+              $HADOOP_MAPRED_HOME/share/hadoop/mapreduce/*:
+              $HADOOP_MAPRED_HOME/share/hadoop/mapreduce/lib/*
+            </value>
+          </property>
+        </configuration>
         \end{minted}
         
         \subsubsection{Edit \emph{yarn-site.xml}}
         Edit the file \path{/opt/hadoop-3.3.0/etc/hadoop/yarn-site.xml} to look like the example below:
         \begin{minted}{xml}
-            <configuration>
-                <property>
-                    <name>yarn.nodemanager.aux-services</name>
-                    <value>mapreduce_shuffle</value>
-                </property>
-                <property>
-                    <name>yarn.nodemanager.env-whitelist</name>
-                    <value>
-                        JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,
-                        HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,
-                        HADOOP_YARN_HOME,HADOOP_MAPRED_HOME
-                    </value>
-                </property>
-            </configuration>
+        <configuration>
+          <property>
+            <name>yarn.nodemanager.aux-services</name>
+            <value>mapreduce_shuffle</value>
+          </property>
+          <property>
+            <name>yarn.nodemanager.env-whitelist</name>
+            <value>
+              JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,
+              HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,
+              HADOOP_YARN_HOME,HADOOP_MAPRED_HOME
+            </value>
+          </property>
+        </configuration>
         \end{minted}
 
     \subsection{Format \emph{HDFS}}
     Format the \emph{Hadoop Distributed File System} (\emph{HDFS}) with the command:
     \begin{minted}{bash}
-        /opt/hadoop-3.3.0/bin/hdfs namenode -format
+    hdfs namenode -format
     \end{minted}
     The \emph{hdfs} command will output several lines of \emph{INFO} messages.
 
     \subsection{Start \emph{NameNode} and \emph{DataNode} daemons}
-    The daemons allow a web interface containing \emph{Hadoop} system stats to run. To start both
-    daemons, run the command:
+    The \emph{NameNode} and \emph{DataNode} daemons generate system stats that can be viewed
+    through a web interface. To start both daemons, run the command:
     \begin{minted}{bash}
-        /opt/hadoop-3.3.0/sbin/start-dfs.sh
+    $HADOOP_HOME$/sbin/start-dfs.sh
     \end{minted}
     The above command might return a \emph{connection refused} error. If this occurs, restart
     the \emph{ssh} service (see section \ref{subsec:sshrestart}). The web interface should now be
@@ -340,14 +348,14 @@ In this guide, \emph{Hadoop} will be used as a data storage system on a single P
     \emph{YARN} acts as a resource manager in a \emph{Hadoop} system. To start the \emph{YARN} daemon,
     run the command:
     \begin{minted}{bash}
-        /opt/hadoop-3.3.0/sbin/start-yarn.sh
+    $HADOOP_HOME$/sbin/start-yarn.sh
     \end{minted}
     The resource manager web interface should now be accessible via
     \url{http://localhost:8088/}.
 
 \section{Hive}
-\emph{Apache Hive} is a data warehousing application that utilizes \emph{SQL} to interact with
-data residing in distributed systems. \emph{Hive} requires a metastore service, which in this case
+\emph{Apache Hive} is a data warehousing platform that utilizes \emph{SQL} to interact with
+data residing in distributed systems. \emph{Hive} requires a \emph{metastore} service, which in this case
 is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
 
     \subsection{Download and extract \emph{Hive}}
@@ -355,44 +363,45 @@ is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
     \begin{enumerate}
         \item Download \emph{Hive} via the \emph{wget} terminal command:
         \begin{minted}[autogobble]{bash}
-            wget http://apache.mirrors.pair.com/hive/hive-3.1.2/apache-hive-3.1.2-bin.tar.gz
+        wget http://apache.mirrors.pair.com/hive/hive-3.1.2/apache-hive-3.1.2-bin.tar.gz
         \end{minted}
 
         \item Unpack \emph{Hive} file using the \emph{tar} command:
         \begin{minted}{bash}
-            tar -xvzf apache-hive-3.1.2-bin.tar.gz
+        tar -xvzf apache-hive-3.1.2-bin.tar.gz
         \end{minted}
 
         \item Move new folder to /opt directory:
         \begin{minted}{bash}
-            sudo mv apache-hive-3.1.2-bin /opt
+        sudo mv apache-hive-3.1.2-bin /opt
         \end{minted}
     \end{enumerate}
 
     \subsection{Set \emph{HIVE\_HOME}}
-    The \emph{HIVE\_HOME} variable must be set in order to let the system know its location.
+    The \emph{HIVE\_HOME} variable must be set in order to let the system know \emph{Hive's} location.
     \begin{enumerate}
-        \item Open $\sim$/.bashrc with an editor, as in the example below:
-        \begin{minted}{bash}
-            vim ~/.bashrc
-        \end{minted}
-
-        \item Add the following line to the \emph{.bashrc} file:
+        \item Open $\sim$/.bashrc and add the following line:
         \label{itm:hivehome}
         \begin{minted}{bash}
-            export HIVE_HOME=/opt/apache-hive-3.1.2-bin
+        export HIVE_HOME=/opt/apache-hive-3.1.2-bin
+        \end{minted}
+
+        \item Also add the following line to include \emph{Hive} in the system path:
+        \begin{minted}{bash}
+        PATH=$PATH:HIVE_HOME/bin
         \end{minted}
 
         \item Reload \emph{Bash} terminal configuration:
         \begin{minted}{bash}
-            source ~/.bashrc
+        source ~/.bashrc
         \end{minted}
         
         \item Ensure \emph{HIVE\_HOME} path has been correctly set:
         \begin{minted}{bash}
-            echo $HIVE_HOME
+        echo $HIVE_HOME
         \end{minted}
         Output should contain the path configured in step \ref{itm:hivehome} above.
+
     \end{enumerate}
 
     \subsection{Initialize all \emph{Hadoop} services}
@@ -418,113 +427,118 @@ is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
     \end{minted}
 
     \subsection{Edit \emph{hive-site.xml}}
-    The \emph{hive-site.xml} file contains required configuration settings for the \emph{Hive} metastore.
-    In this setup, the metastore resides within a \emph{PostgreSQL} database (see section \ref{subsec:postgres}).
+    The \emph{hive-site.xml} file contains required configuration settings for the \emph{Hive metastore}.
+    In this setup, the \emph{metastore} resides within a \emph{PostgreSQL} database (see section \ref{subsec:postgres}).
 
-        \subsubsection{Create file}
-        Copy file \emph{hive-default.xml.template} and rename it as \emph{hive-site.xml}:
+        \subsubsection{Create \emph{hive-site.xml}}
+        Copy the file \emph{hive-default.xml.template} and rename it as \emph{hive-site.xml}:
         \begin{minted}{bash}
             cd /opt/apache-hive-3.1.2-bin/conf
             cp hive-default.xml.template hive-site.xml
         \end{minted}
-
-        \subsubsection{Prevent \emph{URISyntaxException}}
-        To prevent a \emph{Java URISyntaxException} from being returned when attempting to run \emph{Hive}
-        services (see section \ref{subsec:hiveservices}), add the following lines to the beginning of
-        \emph{hive-site.xml}:
-        \begin{minted}{xml}
-            <property>
-                <name>system:java.io.tmpdir</name>
-                <value>/tmp/hive/java</value>
-            </property>
-            <property>
-                <name>system:user.name</name>
-                <value>${user.name}</value>
-            </property>
-        \end{minted}
-
+        
         \subsubsection{Edit configuration settings}
-        Edit the following values in the \emph{hive-site.xml} file at the lines shown below:
+        Edit the following values in the \emph{hive-site.xml} file at the lines shown below. Note
+        that \emph{\textless value/\textgreater} must be replace with \emph{\textless /value\textgreater} in \emph{line 462}.
         \begin{minted}[numbers=left, firstnumber=461]{xml}
-            <name>hive.metastore.uris</name>
-            <value>thrift://127.0.0.1:9083</value>
+          <name>hive.metastore.uris</name>
+          <value>thrift://127.0.0.1:9083</value>
         \end{minted}
         \centerline{\vdots}
         \begin{minted}[numbers=left, firstnumber=568]{xml}
-            <name>javax.jdo.option.ConnectionPassword</name>
-            <value>hive</value>
+          <name>javax.jdo.option.ConnectionPassword</name>
+          <value>hive</value>
         \end{minted}
         \centerline{\vdots}
         \begin{minted}[numbers=left, firstnumber=583]{xml}
-            <name>javax.jdo.option.ConnectionURL</name>
-            <value>jdbc:postgresql://127.0.0.1/hive_metastore</value>
+          <name>javax.jdo.option.ConnectionURL</name>
+          <value>jdbc:postgresql://127.0.0.1/hive_metastore</value>
         \end{minted}
         \centerline{\vdots}
         \begin{minted}[numbers=left, firstnumber=1101]{xml}
-            <name>javax.jdo.option.ConnectionDriverName</name>
-            <value>org.postgresql.Driver</value>
+          <name>javax.jdo.option.ConnectionDriverName</name>
+          <value>org.postgresql.Driver</value>
         \end{minted}
         \centerline{\vdots}
         \begin{minted}[numbers=left, firstnumber=1126]{xml}
-            <name>javax.jdo.option.ConnectionUserName</name>
-            <value>hive</value>
+          <name>javax.jdo.option.ConnectionUserName</name>
+          <value>hive</value>
         \end{minted}
-
-        \subsubsection{Remove illegal characters}
-        Line 3215 in \emph{hive-site.xml} contains illegal characters that will cause a
-        \emph{Java RuntimeException} in step \ref{subsec:schematool}. Remove the characters highlighted below from line 3215:
-        \begin{minted}[autogobble, escapeinside=||]{xml}
-            <property>
-                <name>hive.txn.xlock.iow</name>
-                <value>true</value>
-                <description>|\dots|acquire Exclusive locks for|\colorbox{yellow}{&#8}||\dots|INSERT OVERWRITE.</description>
-            </property>
-        \end{minted}
-
-    \subsection{Update \emph{guava} version}
-    The versions of \emph{guava} between \emph{Hadoop 3.3.0} and \emph{Hive 3.1.2} are not compatible.
-    Having different versions will result in a \emph{Java NoSuchMethodError} in step \ref{subsec:schematool}.
-    \begin{enumerate}
+        
+    \subsection{Create \emph{PostgreSQL} database structure}
+    The \emph{Hive Schema Tool} will create a database structure for the \emph{Hive metastore}.
+    Before this can happen, a few configurations must be adjusted.
+        
+        \subsubsection{Update \emph{guava} version}
+        The versions of \emph{guava} between \emph{Hadoop 3.3.0} and \emph{Hive 3.1.2} are not compatible.
+        Having different versions will result in a \emph{Java NoSuchMethodError} in step \ref{subsec:schematool}.
+        \begin{enumerate}
         \item Delete \emph{guava 19.0} from \emph{Hive}:
         \begin{minted}{bash}
-            cd /opt/apache-hive-3.1.2-bin
-            rm lib/guava-19.0.jar
+        cd /opt/apache-hive-3.1.2-bin
+        rm lib/guava-19.0.jar
         \end{minted}
-
+        
         \item Replace with \emph{guava 27.0} included with \emph{Hadoop}:
         \begin{minted}[autogobble]{bash}
-            cp /opt/hadoop-3.3.0/share/hadoop/hdfs/lib/guava-27.0-jre.jar lib/
+        cp /opt/hadoop-3.3.0/share/hadoop/hdfs/lib/guava-27.0-jre.jar lib/
         \end{minted}
-    \end{enumerate}
+        \end{enumerate}
+        
+        \subsubsection{Remove illegal characters}
+        Line 3215 in \emph{hive-site.xml} contains illegal characters that will cause a
+        \emph{Java RuntimeException}. Remove the characters highlighted below from line 3215:
+        \begin{minted}[autogobble, escapeinside=||]{xml}
+          <property>
+            <name>hive.txn.xlock.iow</name>
+            <value>true</value>
+            <description>|\dots|Exclusive locks for|\colorbox{yellow}{&#8;}||\dots|OVERWRITE.</description>
+          </property>
+        \end{minted}
+        
+        \subsubsection{Run \emph{Schema Tool}}
+        \label{subsec:schematool}
+        The command below will create the database structure for the \emph{Hive metastore}. Once
+        successfully completed, the output should conclude with the message \emph{schemaTool completed}.
+        \begin{minted}{bash}
+        schematool -dbType postgres -initSchema
+        \end{minted}
+        
+  \subsection{Start \emph{Hive} services}
+  \label{subsec:hiveservices}
+  In order to use \emph{Hive}, its \emph{metastore} and server must be started.
 
-    \subsection{Create \emph{PostgreSQL} database structure}
-    \label{subsec:schematool}
-    The command below will create the database structure for the \emph{Hive} metastore. Once
-    successfully completed, the output should conclude with the message \emph{schemaTool completed}.
-    \begin{minted}{bash}
-        /opt/apache-hive-3.1.2-bin/bin/schematool -dbType postgres -initSchema
+    \subsubsection{Prevent \emph{URISyntaxException}}
+    To prevent a \emph{Java URISyntaxException} from being returned when attempting to run \emph{Hive}
+    services, add the following lines to the beginning of
+    \emph{hive-site.xml}:
+    \begin{minted}{xml}
+    <property>
+      <name>system:java.io.tmpdir</name>
+      <value>/tmp/hive/java</value>
+    </property>
+    <property>
+      <name>system:user.name</name>
+      <value>${user.name}</value>
+    </property>
     \end{minted}
 
-    \subsection{Start \emph{Hive} services}
-    \label{subsec:hiveservices}
-    In order to use \emph{Hive}, its metastore service must be started. \emph{Hive} also provides
-    a web interface with information on running sessions, queries, etc.
+    \subsubsection{Start \emph{Hive metastore} service}
+    Run the following command in a terminal to start \emph{Hive metastore} services:
+    \begin{minted}{bash}
+    hive --service metastore
+    \end{minted}
 
-        \subsubsection{Initialize \emph{Hive} metastore service}
-        Run the following command in a terminal to start \emph{Hive} metastore services:
-        \begin{minted}{bash}
-            $HIVE_HOME/bin/hive --service metastore
-        \end{minted}
+    \subsubsection{Start \emph{Hive} server}
+    Open another terminal and run the following command to Initialize the \emph{Hive} server:
+    \begin{minted}{bash}
+    hive --service hiveserver2
+    \end{minted}
 
-        \subsubsection{Initialize \emph{Hive} server}
-        Open another terminal and run the following command to Initialize the \emph{Hive} server:
-        \begin{minted}{bash}
-            $HIVE_HOME/bin/hive --service hiveserver2
-        \end{minted}
-
-        \subsubsection{Access web interface}
-        After about one minute of running both metastore and \emph{Hive} server, access the web
-        interface via \url{http://localhost:10002/}
+    \subsubsection{Access web interface}
+    \emph{Hive} also provides a web interface with information on running sessions, queries, etc.
+    After about \emph{one minute} of running both \emph{metastore} and \emph{Hive} server, access the web
+    interface via \url{http://localhost:10002/}
 
 \section{Spark}
 With \emph{Hadoop} and \emph{Hive} configured, we can finally set up and use \emph{Spark}.
