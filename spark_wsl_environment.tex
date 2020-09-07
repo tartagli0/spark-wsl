@@ -141,16 +141,16 @@ software, configuration, and other requirements must be met.
     ssh-keygen -t rsa
     \end{minted}
     Leave the password blank when prompted, as \emph{Hadoop} will utilize a password-less
-    \emph{ssh} login.
+    \emph{SSH} login.
 
     \subsubsection{Allow \emph{localhost} login}
     \emph{Hadoop} requires the ability to log into the \emph{localhost} (i.e., your local PC) via
-    password-less \emph{ssh}. To accomplish this, run the following command:
+    password-less \emph{SSH}. To accomplish this, run the following command:
     \begin{minted}{bash}
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
     \end{minted}
 
-    \subsubsection{Restart \emph{ssh} service}
+    \subsubsection{Restart \emph{SSH} service}
     \label{subsec:sshrestart}
     Restart \emph{SSH} and apply new settings:
     \begin{minted}{bash}
@@ -170,8 +170,8 @@ software, configuration, and other requirements must be met.
     \end{minted}
     Rerunning the command in \ref{subsec:sshrestart} should now complete without errors.
 
-    \subsubsection{Verify password-less \emph{ssh} login}
-    Ensure that \emph{localhost} can be accessed via \emph{ssh} without a password:
+    \subsubsection{Verify password-less \emph{SSH} login}
+    Ensure that \emph{localhost} can be accessed via \emph{SSH} without a password:
     \begin{minted}{bash}
     ssh localhost
     \end{minted}
@@ -345,7 +345,7 @@ single PC.
   $HADOOP_HOME$/sbin/start-dfs.sh
   \end{minted}
   The above command might return a \emph{connection refused} error. If this occurs, restart
-  the \emph{ssh} service (see section \ref{subsec:sshrestart}). The web interface should now be
+  the \emph{SSH} service (see section \ref{subsec:sshrestart}). The web interface should now be
   accessible via \url{http://localhost:9870/}.
 
   \subsection{Start \emph{YARN} daemon}
@@ -416,7 +416,7 @@ case is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
   \begin{minted}{bash}
   $HADOOP_HOME/sbin/start-all.sh
   \end{minted}
-  If the above command returns \emph{connection refused} errors, restart \emph{ssh} service as
+  If the above command returns \emph{connection refused} errors, restart \emph{SSH} service as
   in section \ref{subsec:sshrestart}.
 
   \subsection{Configure \emph{HDFS}}
