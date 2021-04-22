@@ -15,6 +15,7 @@
 
 \title{Creating a Stand-Alone Spark Environment in Windows Subsystem for Linux}
 \author{Abraham Vargas}
+\date{Last Updated: \today}
 \maketitle
 
 \begin{abstract}
@@ -594,12 +595,20 @@ With \emph{Hadoop} and \emph{Hive} configured, we can finally set up and use \em
   \begin{minted}{bash}
   export SPARK_HOME=/opt/spark-3.0.0-bin-hadoop3.2
   \end{minted}
-
+  
   \subsection{Add \emph{Spark} to system path}
   Adding \emph{Spark} to the system path will allow you to run \emph{Spark} commands without
   using full paths. Add the following line to $\sim$/.bashrc:
   \begin{minted}{bash}
   export PATH=$PATH:$SPARK_HOME/bin
+  \end{minted}
+  
+  \subsection{Set local IP}
+  \emph{Ubuntu} adds a \emph{hostname} entry to the \emph{/etc/hosts} file, which can cause
+  conflicts with \emph{localhost} when \emph{Spark} attempts to resolve IP addresses. To avoid
+  IP-related warnings and errors, add the following line to $\sim$/.bashrc:
+  \begin{minted}{bash}
+  export SPARK_LOCAL_IP=localhost
   \end{minted}
 
   \subsection{Reload configuration}
@@ -764,53 +773,65 @@ accomplished manually each time, or by the use of a script for automation.
 
 \newpage
 \begin{thebibliography}{9}
-    \bibitem{postgres_metastore}
-    Hewlett Packard Enterprise Development LP,
-    \textit{Configuring a Remote PostgreSQL Database for the Hive Metastore},
-    2020,
-    \url{https://docs.datafabric.hpe.com/61/Hive/Config-RemotePostgreSQLForHiveMetastore.html}
-    
-    \bibitem{hadoop_install}
-    The Apache Software Foundation,
-    \textit{Hadoop: Setting up a Single Node Cluster},
-    2020,
-    \url{
-      https://hadoop.apache.org/docs/r3.3.0/hadoop-project-dist/hadoop-common/
-      SingleCluster.html}
+  \bibitem{postgres_metastore}
+  Hewlett Packard Enterprise Development LP,
+  \textit{Configuring a Remote PostgreSQL Database for the Hive Metastore},
+  2020,
+  \url{https://docs.datafabric.hpe.com/61/Hive/Config-RemotePostgreSQLForHiveMetastore.html}
+  
+  \bibitem{hadoop_install}
+  The Apache Software Foundation,
+  \textit{Hadoop: Setting up a Single Node Cluster},
+  2020,
+  \url{
+    https://hadoop.apache.org/docs/r3.3.0/hadoop-project-dist/hadoop-common/
+    SingleCluster.html}
 
-    \bibitem{ubuntu_install}
-    Debian Installer Team,
-    \textit{Ubuntu Installation Guide},
-    2020,
-    \url{https://help.ubuntu.com/lts/installation-guide/amd64/index.html}
+  \bibitem{ubuntu_install}
+  Debian Installer Team,
+  \textit{Ubuntu Installation Guide},
+  2020,
+  \url{https://help.ubuntu.com/lts/installation-guide/amd64/index.html}
 
-    \bibitem{guava_error}
-    Pradeep Kumar, Javi Roman,
-    \textit{Hive Issue 22915},
-    2020,
-    \url{https://issues.apache.org/jira/browse/HIVE-22915}
+  \bibitem{guava_error}
+  Pradeep Kumar, Javi Roman,
+  \textit{Hive Issue 22915},
+  2020,
+  \url{https://issues.apache.org/jira/browse/HIVE-22915}
 
-    \bibitem{hive}
-    Raymond Tang,
-    \textit{Apache Hive 3.1.1 Installation on Windows 10 using Windows Subsystem for Linux},
-    2018,
-    \url{
-      https://kontext.tech/column/hadoop/309/apache-hive-311-installation-on-windows-10-using-
-      windows-subsystem-for-linux}
+  \bibitem{hive}
+  Raymond Tang,
+  \textit{Apache Hive 3.1.1 Installation on Windows 10 using Windows Subsystem for Linux},
+  2018,
+  \url{
+    https://kontext.tech/column/hadoop/309/apache-hive-311-installation-on-windows-10-using-
+    windows-subsystem-for-linux}
 
-    \bibitem{hive_error_fix}
-    Vu Duc Tiep,
-    \textit{[Hive Installation] java.net.URISyntaxException: Relative path in absolute URI},
-    2017,
-    \url{http://driftingengineer.blogspot.com/2017/09/hive-installation-javaneturisyntaxexcep.html}
+  \bibitem{hive_error_fix}
+  Vu Duc Tiep,
+  \textit{[Hive Installation] java.net.URISyntaxException: Relative path in absolute URI},
+  2017,
+  \url{http://driftingengineer.blogspot.com/2017/09/hive-installation-javaneturisyntaxexcep.html}
 
-    \bibitem{spark}
-    Raymond Tang,
-    \textit{Apache Spark 2.4.3 Installation on Windows 10 using Windows Subsystem for Linux},
-    2018,
-    \url{
-      https://kontext.tech/column/spark/311/apache-spark-243-installation-on-windows-10-using-
-      windows-subsystem-for-linux}
+  \bibitem{spark}
+  Raymond Tang,
+  \textit{Apache Spark 2.4.3 Installation on Windows 10 using Windows Subsystem for Linux},
+  2018,
+  \url{
+    https://kontext.tech/column/spark/311/apache-spark-243-installation-on-windows-10-using-
+    windows-subsystem-for-linux}
+
+  \bibitem{spark-env-var}
+  The Apache Software Foundation,
+  \textit{Spark Configuration: Environment Variables},
+  2021,
+  \url{https://spark.apache.org/docs/latest/configuration.html#environment-variables}
+
+  \bibitem{connect-refused}
+  The Apache Software Foundation,
+  \textit{HADOOP2: Connection Refused},
+  2019,
+  \url{https://cwiki.apache.org/confluence/display/HADOOP2/ConnectionRefused}
 \end{thebibliography}
 
 \end{document}
