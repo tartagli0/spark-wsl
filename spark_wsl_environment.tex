@@ -574,36 +574,36 @@ case is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
 With \emph{Hadoop} and \emph{Hive} configured, we can finally set up and use \emph{Spark}.
 
   \subsection{Download and extract \emph{Spark}}
-  This guide uses the latest version of \emph{Spark 3.3.0}. As \emph{Hadoop 3.3.0} is
+  This guide will use \emph{Spark 3.0.1}. As \emph{Hadoop 3.3.0} is
   already installed, we'll download \emph{Spark Pre-built for Apache Hadoop 3.2 and later}.
   \begin{enumerate}
-  \item Use the \emph{wget} command to download \emph{Spark 3.3.0}:
+  \item Use the \emph{wget} command to download \emph{Spark 3.0.1}:
   \begin{minted}[autogobble]{bash}
-  wget http://apache.mirrors.pair.com/spark/spark-3.0.0/spark-3.0.0-bin-hadoop3.2.tgz
+  wget https://archive.apache.org/dist/spark/spark-3.0.1/spark-3.0.1-bin-hadoop3.2.tgz
   \end{minted}
 
   \item Extract the downloaded file:
   \begin{minted}{bash}
-  tar -xvzf spark-3.0.0-bin-hadoop3.2.tgz
+  tar -xvzf spark-3.0.1-bin-hadoop3.2.tgz
   \end{minted}
 
   \item Move \emph{Spark} folder into \emph{/opt} directory:
   \begin{minted}{bash}
-  mv spark-3.0.0-bin-hadoop3.2 /opt
+  sudo mv spark-3.0.1-bin-hadoop3.2 /opt
   \end{minted}
   \end{enumerate}
 
   \subsection{Set \emph{SPARK\_HOME} variable}
   Edit $\sim$/.bashrc and add the following line:
   \begin{minted}{bash}
-  export SPARK_HOME=/opt/spark-3.0.0-bin-hadoop3.2
+  export SPARK_HOME=/opt/spark-3.0.1-bin-hadoop3.2
   \end{minted}
   
   \subsection{Add \emph{Spark} to system path}
   Adding \emph{Spark} to the system path will allow you to run \emph{Spark} commands without
   using full paths. Add the following line to $\sim$/.bashrc:
   \begin{minted}{bash}
-  export PATH=$PATH:$SPARK_HOME/bin
+  PATH=$PATH:$SPARK_HOME/bin
   \end{minted}
   
   \subsection{Set local IP}
