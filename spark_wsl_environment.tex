@@ -33,7 +33,7 @@ options for optimization of production clusters and learning related technologie
 \emph{Windows Subsystem for Linux} (\emph{WSL}) provides a way to run a \emph{Linux} system
 concurrently with \emph{Microsoft Windows}. This avoids having to install a full \emph{Linux}
 distribution, learning the new system, and setting up a multi-boot PC. This guide will utilize
-the \emph{Ubuntu 18.04 Linux} distribution within \emph{WSL} to teach the process of setting up a
+the \emph{Ubuntu 20.04 Linux} distribution within \emph{WSL} to teach the process of setting up a
 local \emph{Spark} cluster.
 \end{abstract}
 
@@ -49,9 +49,9 @@ software, configuration, and other requirements must be met.
   \emph{WSL} allows a \emph{Linux} distribution (distro) to run concurrently with \emph{Windows 10}.
   \emph{WSL 2} now includes a \emph{Linux} kernel and is several times faster than the original
   \emph{WSL}. This guide assumes that \emph{WSL 2} is installed and is running the
-  \emph{Ubuntu 18.04} distro. To install \emph{WSL 2}, follow the
+  \emph{Ubuntu 20.04} distro. To install \emph{WSL 2}, follow the
   \href{https://docs.microsoft.com/en-us/windows/wsl/install-win10}{Windows Subsystem
-  for Linux Installation Guide for Windows 10}. Make sure to use \emph{Ubuntu 18.04} as the distro.
+  for Linux Installation Guide for Windows 10}. Make sure to use \emph{Ubuntu 20.04} as the distro.
 
   \subsection{Java}
   \emph{Spark}, \emph{Hadoop}, and \emph{Hive} all require a \emph{Java Runtime Environment}
@@ -102,7 +102,7 @@ software, configuration, and other requirements must be met.
   \emph{MySQL}, \emph{PostgreSQL}, and \emph{Derby}. This guide will use \emph{PostgreSQL}.
 
     \subsubsection{Install \emph{PostgreSQL}}
-    \emph{PostgreSQL 12} is the default version packaged for \emph{Ubuntu 18.04}. Install
+    \emph{PostgreSQL 12} is the default version packaged for \emph{Ubuntu 20.04}. Install
     \emph{PostgreSQL 12} with the command:
     \begin{minted}{bash}
     sudo apt install postgresql-12
