@@ -356,13 +356,14 @@ single PC.
   \begin{minted}{bash}
   hdfs namenode -format
   \end{minted}
-  The \emph{hdfs} command will output several lines of \emph{INFO} messages.
+  The \emph{hdfs} command should warn that the log file does not exist. This will be followed
+  by several lines of \emph{INFO} messages.
 
   \subsection{Start \emph{NameNode} and \emph{DataNode} daemons}
   The \emph{NameNode} and \emph{DataNode} daemons generate system stats that can be viewed
   through a web interface. To start both daemons, run the command:
   \begin{minted}{bash}
-  $HADOOP_HOME$/sbin/start-dfs.sh
+  $HADOOP_HOME/sbin/start-dfs.sh
   \end{minted}
   The above command might return a \emph{connection refused} error. If this occurs, restart
   the \emph{SSH} service (see section \ref{subsec:sshrestart}). The web interface should now be
@@ -372,7 +373,7 @@ single PC.
   \emph{YARN} acts as a resource manager in a \emph{Hadoop} system. To start the \emph{YARN}
   daemon, run the command:
   \begin{minted}{bash}
-  $HADOOP_HOME$/sbin/start-yarn.sh
+  $HADOOP_HOME/sbin/start-yarn.sh
   \end{minted}
   The resource manager web interface should now be accessible via
   \url{http://localhost:8088/}.
