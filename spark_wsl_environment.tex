@@ -46,10 +46,10 @@ Before installing \emph{Spark} and its related components \emph{Hadoop} and \emp
 software, configuration, and other requirements must be met.
 
   \subsection{WSL 2}
-  \emph{WSL} allows a \emph{Linux} distribution (distro) to run concurrently with \emph{Windows 10}.
-  \emph{WSL 2} now includes a \emph{Linux} kernel and is several times faster than the original
-  \emph{WSL}. This guide assumes that \emph{WSL 2} is installed and is running the
-  \emph{Ubuntu 20.04} distro. To install \emph{WSL 2}, follow the
+  \emph{WSL} allows a \emph{Linux} distribution (distro) to run concurrently with
+  \emph{Windows 10}. \emph{WSL 2} now includes a \emph{Linux} kernel and is several times faster
+  than the original \emph{WSL}. This guide assumes that \emph{WSL 2} is installed and is running
+  the \emph{Ubuntu 20.04} distro. To install \emph{WSL 2}, follow the
   \href{https://docs.microsoft.com/en-us/windows/wsl/install-win10}{Windows Subsystem
   for Linux Installation Guide for Windows 10}. Make sure to use \emph{Ubuntu 20.04} as the distro.
 
@@ -98,8 +98,9 @@ software, configuration, and other requirements must be met.
 
   \subsection{PostgreSQL}
   \label{subsec:postgres}
-  \emph{Hive} requires a database for its \emph{metastore}. In terms of open-source options, \emph{Hive} can use
-  \emph{MySQL}, \emph{PostgreSQL}, and \emph{Derby}. This guide will use \emph{PostgreSQL}.
+  \emph{Hive} requires a database for its \emph{metastore}. In terms of open-source options,
+  \emph{Hive} can use \emph{MySQL}, \emph{PostgreSQL}, and \emph{Derby}. This guide will use
+  \emph{PostgreSQL}.
 
     \subsubsection{Install \emph{PostgreSQL}}
     \emph{PostgreSQL 12} is the default version packaged for \emph{Ubuntu 20.04}. Install
@@ -381,8 +382,8 @@ single PC.
 \newpage
 \section{Hive}
 \emph{Apache Hive} is a data warehousing platform that utilizes \emph{SQL} to interact with
-data residing in distributed systems. \emph{Hive} requires a \emph{metastore} service, which in this
-case is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
+data residing in distributed systems. \emph{Hive} requires a \emph{metastore} service, which in
+this case is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
 
   \subsection{Download and extract \emph{Hive}}
   This guide will use the current latest stable version, \emph{Apache Hive 3.1.2}.
