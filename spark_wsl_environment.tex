@@ -776,6 +776,24 @@ accomplished manually each time, or by the use of a script for automation.
 \end{enumerate}
 
 \newpage
+\section{Optional Configuration}
+The previous sections contain all necessary steps in setting up a local \emph{Spark} environment.
+This section details additional configuration options that, though not required, facilitate
+developing applications in a local \emph{Spark} environment.
+
+  \subsection{PySpark}
+  When starting a \emph{PySpark} session, a large number of \emph{warning} messages are printed,
+  similar to the example below:
+  \begin{minted}{bash}
+  WARN HiveConf: HiveConf of name hive.metastore.client.capability.check does not exist
+  \end{minted}
+  These warning messages result from \emph{PySpark} attempting to start \emph{Hive} with
+  unsupported features. Each feature can be disabled by removing it from the file
+  \path{/opt/apache-hive-3.1.2-bin/conf/hive-site.xml}. As an alternative, the original
+  \emph{hive-site.xml} file can be replaced with a pre-configured version available in
+  \href{https://github.com/tartagli0/spark-wsl/tree/master/conf}{this repository}.
+
+\newpage
 \begin{thebibliography}{9}
   \bibitem{postgres_metastore}
   Hewlett Packard Enterprise Development LP,
