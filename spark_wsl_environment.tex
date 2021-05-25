@@ -437,7 +437,8 @@ case is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
   \begin{minted}{bash}
   $HADOOP_HOME/sbin/start-all.sh
   \end{minted}
-  If the above command returns \emph{connection refused} errors, restart \emph{SSH} service as
+  The above command should warn that the configuration is not recommended for production.
+  If \emph{connection refused} errors are returned, restart \emph{SSH} service as
   in section \ref{subsec:sshrestart}.
 
   \subsection{Configure \emph{HDFS}}
@@ -491,6 +492,17 @@ case is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
     <name>javax.jdo.option.ConnectionUserName</name>
     <value>hive</value>
     \end{minted}
+
+    \subsubsection{Remove illegal characters}
+    Line 3215 in \emph{hive-site.xml} contains illegal characters that will cause a
+    \emph{Java RuntimeException}. Remove the characters highlighted below from line 3215:
+    \begin{minted}[autogobble, escapeinside=||]{xml}
+      <property>
+        <name>hive.txn.xlock.iow</name>
+        <value>true</value>
+        <description>|\dots|locks for|\colorbox{yellow}{&#8;}||\dots|OVERWRITE.</description>
+      </property>
+    \end{minted}
         
   \subsection{Create \emph{PostgreSQL} database structure}
   The \emph{Hive Schema Tool} will create a database structure for the \emph{Hive metastore}.
@@ -513,17 +525,6 @@ case is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
     \end{minted}
     \end{enumerate}
         
-    \subsubsection{Remove illegal characters}
-    Line 3215 in \emph{hive-site.xml} contains illegal characters that will cause a
-    \emph{Java RuntimeException}. Remove the characters highlighted below from line 3215:
-    \begin{minted}[autogobble, escapeinside=||]{xml}
-      <property>
-        <name>hive.txn.xlock.iow</name>
-        <value>true</value>
-        <description>|\dots|locks for|\colorbox{yellow}{&#8;}||\dots|OVERWRITE.</description>
-      </property>
-    \end{minted}
-        
     \subsubsection{Run \emph{Schema Tool}}
     \label{subsec:schematool}
     The command below will create the database structure for the \emph{Hive metastore}. Once
@@ -538,7 +539,8 @@ case is provided by \emph{PostgreSQL} (section \ref{subsec:postgres}).
   In order to use \emph{Hive}, its \emph{metastore} and server must be started.
     \subsubsection{Prevent \emph{URISyntaxException}}
     To prevent a \emph{Java URISyntaxException} from being returned when attempting to run
-    \emph{Hive} services, add the following lines to the beginning of \emph{hive-site.xml}:
+    \emph{Hive} services, add the following lines directly after \emph{line 21} in
+    \emph{hive-site.xml}:
     \begin{minted}{xml}
     <property>
       <name>system:java.io.tmpdir</name>
