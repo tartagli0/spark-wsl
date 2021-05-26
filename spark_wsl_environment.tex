@@ -787,11 +787,28 @@ developing applications in a local \emph{Spark} environment.
   \begin{minted}{bash}
   WARN HiveConf: HiveConf of name hive.metastore.client.capability.check does not exist
   \end{minted}
-  These warning messages result from \emph{PySpark} attempting to start \emph{Hive} with
-  unsupported features. Each feature can be disabled by removing it from the file
-  \path{/opt/apache-hive-3.1.2-bin/conf/hive-site.xml}. As an alternative, the original
-  \emph{hive-site.xml} file can be replaced with a pre-configured version available in
+  These warnings result from \emph{PySpark} initializing \emph{Hive} with unsupported
+  features. Each feature can be individually disabled by removing it from the file
+  \path{/opt/apache-hive-3.1.2-bin/conf/hive-site.xml}. As a simpler alternative, the original
+  \path{hive-site.xml} file can be replaced with a pre-configured version from
   \href{https://github.com/tartagli0/spark-wsl/tree/master/conf}{this repository}.
+
+  \subsection{Spark SQL}
+  By default, starting a \emph{Spark SQL} session will trigger dozens of \emph{INFO} messages.
+  This results in crowded and difficult to read \emph{SQL} output. Use the following steps to
+  configure the logging level so that only warning messages or higher are displayed.
+  \begin{enumerate}
+  \item Copy the default \emph{log4j} template
+  \begin{minted}{bash}
+  cd $SPARK_HOME/conf
+  cp log4j.properties.template log4j.properties
+  \end{minted}
+
+  \item Edit line 19 of the new \path{log4j.properties} file, as shown below
+  \begin{minted}{bash}
+  log4j.rootCategory=WARN, console
+  \end{minted}
+  \end{enumerate}
 
 \newpage
 \begin{thebibliography}{9}
