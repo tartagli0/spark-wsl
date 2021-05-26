@@ -782,16 +782,34 @@ This section details additional configuration options that, though not required,
 developing applications in a local \emph{Spark} environment.
 
   \subsection{PySpark}
-  When starting a \emph{PySpark} session, a large number of \emph{warning} messages are printed,
-  similar to the example below:
-  \begin{minted}{bash}
-  WARN HiveConf: HiveConf of name hive.metastore.client.capability.check does not exist
-  \end{minted}
-  These warnings result from \emph{PySpark} initializing \emph{Hive} with unsupported
-  features. Each feature can be individually disabled by removing it from the file
-  \path{/opt/apache-hive-3.1.2-bin/conf/hive-site.xml}. As a simpler alternative, the original
-  \path{hive-site.xml} file can be replaced with a pre-configured version from
-  \href{https://github.com/tartagli0/spark-wsl/tree/master/conf}{this repository}.
+
+    \subsubsection{Hive warnings}
+    A large number of \emph{warning} messages are printed every time a \emph{PySpark} session
+    is started, similar to the example below:
+    \begin{minted}{bash}
+    WARN HiveConf: HiveConf of name hive.metastore.client.capability.check does not exist
+    \end{minted}
+    These warnings result from \emph{PySpark} initializing \emph{Hive} with unsupported
+    features. Each feature can be individually disabled by removing it from the file
+    \path{/opt/apache-hive-3.1.2-bin/conf/hive-site.xml}. As a simpler alternative, the original
+    \path{hive-site.xml} file can be replaced with a pre-configured version from
+    \href{https://github.com/tartagli0/spark-wsl/tree/master/conf}{this repository}.
+
+    \subsubsection{PYTHONPATH variable}
+    In order to import \emph{PySpark} modules when developing \emph{Python} packages and
+    applications, the \emph{PYTHONPATH} environment variable must first be set.
+    \begin{enumerate}
+    \item Edit the \path{~/.bashrc} file by adding the lines:
+    \begin{minted}{bash}
+    export PYTHONPATH=$SPARK_HOME/python:$PYTHONPATH
+    export PYTHONPATH=$SPARK_HOME/python/lib/py4j-0.10.9-src.zip:$PYTHONPATH
+    \end{minted}
+
+    \item Load the new settings
+    \begin{minted}{bash}
+    source ~/.bashrc
+    \end{minted}
+    \end{enumerate}
 
   \subsection{Spark SQL}
   By default, starting a \emph{Spark SQL} session will trigger dozens of \emph{INFO} messages.
