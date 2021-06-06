@@ -41,6 +41,20 @@ local \emph{Spark} cluster.
 \tableofcontents
 \newpage
 
+\section{Target Environment}
+The target environment in this guide is based on a real-life production setup of a
+\href{https://databricks.com/}{Databricks} cluster running on top of an
+\href{https://aws.amazon.com/}{Amazon Web Services} (\emph{AWS}) platform.
+The \emph{Databricks} computing cluster this production system runs the following:
+\begin{itemize}
+  \item \emph{Databricks Runtime 7.3}
+  \item \emph{Ubuntu 18.04 LTS}
+  \item \emph{Spark 3.0.1}
+  \item \emph{Python 3.7.6}
+\end{itemize}
+As the scope of this guide is limited to configuring a local \emph{Spark} environment in
+\emph{WSL}, only \emph{Spark 3.0.1} from the items above will be covered in detail.
+
 \section{Prerequisites}
 Before installing \emph{Spark} and its related components \emph{Hadoop} and \emph{Hive}, several
 software, configuration, and other requirements must be met.
